@@ -1,6 +1,6 @@
+# code copied from stackoverflow to make pyinstaller work
 import sys
 import os
-
 def resource_path(relative_path):
     try:
     # PyInstaller creates a temp folder and stores path in _MEIPASS
@@ -11,8 +11,10 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 
+
 import pygame
 
+# class for file reading
 class Line:
     def __init__(self, stimulus, delay):
         self.stimulus = stimulus
@@ -35,7 +37,10 @@ dt = 0
 center = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 circlePos = pygame.Vector2(screen.get_width() / 2, 3* screen.get_height()/4)
 circleRaius = screen.get_height() * 0.1 / 2
+
+#ratio is for scaling the width of the cross arms easier
 ratio = 0.1
+# determining the point of the cross in the center of the screen
 poly = [
     center + pygame.Vector2(-1*(circleRaius/2), (circleRaius * ratio) / 2),
     center + pygame.Vector2(-1*((circleRaius * ratio) / 2), (circleRaius * ratio) / 2),
@@ -51,14 +56,18 @@ poly = [
     center - pygame.Vector2(circleRaius / 2, (circleRaius * ratio) / 2),
     ]
 
+# booleans used for knowing when to show the circle, and other stuff
 showCircle = True
 showed = False
-beep = pygame.mixer.Sound('./beep.mp3')
-delay = [100, 150, 200, 400]
-i = 0
 waitingForAnswer = False
 start = False
 answer = False
+
+# the soun 
+beep = pygame.mixer.Sound('./beep.mp3')
+
+# index counter used in the game cicle
+i = 0
 
 while running:
     pygame.event.pump()
@@ -69,7 +78,7 @@ while running:
     # get pressed keys
     keys = pygame.key.get_pressed()
     
-    # start of the program
+    # before start of the stimulus
     if not start:
         # quit event
         for event in pygame.event.get():
@@ -107,8 +116,11 @@ while running:
             with open("answers.txt", "a") as f:
                 f.write("2\n")
         pygame.time.delay(1000)
-    
-    
+    elif waitingForAnswer and keys[pygame.K_BACKSPACE]:
+        waitingForAnswer = False
+        showCircle = True
+        pygame.time.delay(1000)
+
     # stimulus
     if not waitingForAnswer:
     
@@ -137,7 +149,7 @@ while running:
             if showed:
                 pygame.display.flip()
                 dt = clock.tick_busy_loop(60) / 1000
-                pygame.time.delay(int(file[i].delay) - int(dt*1000))
+                pygame.time.delay(int(file[i].delay))
                 pygame.draw.circle(screen, "white", circlePos, circleRaius)
                 pygame.display.flip()
                 beep.play()
@@ -160,7 +172,7 @@ while running:
             if showed:
                 pygame.display.flip()
                 dt = clock.tick_busy_loop(60) / 1000
-                pygame.time.delay(int(file[i].delay) - int(dt*1000))
+                pygame.time.delay(int(file[i].delay))
                 pygame.draw.circle(screen, "white", circlePos, circleRaius)
                 pygame.display.flip()
                 dt = clock.tick_busy_loop(60) / 1000
@@ -182,7 +194,7 @@ while running:
             if showed:
                 pygame.display.flip()
                 dt = clock.tick_busy_loop(60) / 1000
-                pygame.time.delay(int(file[i].delay) - int(dt*1000))
+                pygame.time.delay(int(file[i].delay))
                 beep.play()
                 showed = False
                 waitingForAnswer = True
@@ -199,7 +211,7 @@ while running:
                 showed = True
                 continue
             if showed:
-                pygame.time.delay(int(file[i].delay) - int(dt*1000))
+                pygame.time.delay(int(file[i].delay))
                 pygame.draw.circle(screen, "white", circlePos, circleRaius)
                 pygame.display.flip()
                 dt = clock.tick_busy_loop(60) / 1000
@@ -222,7 +234,7 @@ while running:
             if showed:
                 pygame.display.flip()
                 dt = clock.tick_busy_loop(60) / 1000
-                pygame.time.delay(int(file[i].delay) - int(dt*1000))
+                pygame.time.delay(int(file[i].delay))
                 pygame.draw.circle(screen, "white", circlePos, circleRaius)
                 pygame.display.flip()
                 dt = clock.tick_busy_loop(60) / 1000
@@ -244,7 +256,7 @@ while running:
             if showed:
                 pygame.display.flip()
                 dt = clock.tick_busy_loop(60) / 1000
-                pygame.time.delay(int(file[i].delay) - int(dt*1000))
+                pygame.time.delay(int(file[i].delay))
                 pygame.draw.circle(screen, "white", circlePos, circleRaius)
                 pygame.display.flip()
                 beep.play()
@@ -268,7 +280,7 @@ while running:
             if showed:
                 pygame.display.flip()
                 dt = clock.tick_busy_loop(60) / 1000
-                pygame.time.delay(int(file[i].delay) - int(dt*1000))
+                pygame.time.delay(int(file[i].delay))
                 beep.play()
                 dt = clock.tick_busy_loop(60) / 1000
                 showed = False
@@ -286,7 +298,7 @@ while running:
                 showed = True
                 continue
             if showed:
-                pygame.time.delay(int(file[i].delay) - int(dt*1000))
+                pygame.time.delay(int(file[i].delay))
                 pygame.draw.circle(screen, "white", circlePos, circleRaius)
                 pygame.display.flip()
                 beep.play()
@@ -296,7 +308,7 @@ while running:
                 print("A-VA\n")
                 continue
 
-    # quit event
+    # quit event listener
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
